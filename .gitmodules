@@ -4,9 +4,6 @@
 [submodule "packages/contracts/lib/optimism"]
 	path = packages/contracts/lib/optimism
 	url = https://github.com/ethereum-optimism/optimism
-[submodule "packages/contracts/lib/ERC20ASG"]
-	path = packages/contracts/lib/ERC20ASG
-	url = https://github.com/parseb/ERC20ASG
 [submodule "packages/contracts/lib/openzeppelin-contracts"]
 	path = packages/contracts/lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
