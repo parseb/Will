@@ -1,4 +1,38 @@
 [rpc_endpoints]
+"mainnet/op" = "https://mainnet.optimism.io"
+"mainnet/automata" = "https://rpc.ata.network"
+"mainnet/base" = "https://mainnet.base.org"
+"mainnet/cyber" = "https://rpc.cyber.co"
+"mainnet/ethernity" = "https://mainnet.ethernitychain.io"
+"mainnet/funki" = "https://rpc-mainnet.funkichain.com"
+"mainnet/lisk" = "https://rpc.api.lisk.com"
+"mainnet/lyra" = "https://rpc.lyra.finance"
+"mainnet/metal" = "https://rpc.metall2.com"
+"mainnet/mode" = "https://mainnet.mode.network"
+"mainnet/orderly" = "https://rpc.orderly.network"
+"mainnet/race" = "https://racemainnet.io"
+"mainnet/shape" = "https://mainnet.shape.network/"
+"mainnet/swan" = "https://mainnet-rpc.swanchain.org"
+"mainnet/tbn" = "https://rpc.zero.thebinaryholdings.com"
+"mainnet/worldchain" = "https://worldchain-mainnet.g.alchemy.com/public"
+"mainnet/zora" = "https://rpc.zora.energy"
+"sepolia/op" = "https://sepolia.optimism.io"
+"sepolia/base" = "https://sepolia.base.org"
+"sepolia/cyber" = "https://rpc.testnet.cyber.co"
+"sepolia/ethernity" = "https://testnet.ethernitychain.io"
+"sepolia/funki" = "https://funki-testnet.alt.technology"
+"sepolia/lisk" = "https://rpc.sepolia-api.lisk.com"
+"sepolia/metal" = "https://testnet.rpc.metall2.com"
+"sepolia/minato" = "https://rpc.minato.soneium.org"
+"sepolia/mode" = "https://sepolia.mode.network"
+"sepolia/race" = "https://racetestnet.io"
+"sepolia/shape" = "https://sepolia.shape.network/"
+"sepolia/tbn" = "https://rpc.testnet.thebinaryholdings.com"
+"sepolia/unichain" = "https://sepolia.unichain.org"
+"sepolia/worldchain" = "https://worldchain-sepolia.g.alchemy.com/public"
+"sepolia/zora" = "https://sepolia.rpc.zora.energy"
+"sepolia-dev-0/base-devnet-0" = ""
+"sepolia-dev-0/oplabs-devnet-0" = ""
 op_chain_a = "http://127.0.0.1:9545"
 op_chain_b = "http://127.0.0.1:9546"
 
@@ -21,5 +55,6 @@ remappings = [
   "@solady/=lib/optimism/packages/contracts-bedrock/lib/solady/src/",
   "@openzeppelin/contracts-v5=lib/optimism/packages/contracts-bedrock/lib/openzeppelin-contracts-v5/contracts/",
   "@openzeppelin/contracts/=lib/optimism/packages/contracts-bedrock/lib/openzeppelin-contracts/contracts/",
+  "openzeppelin-contracts/token/=lib/optimism/packages/contracts-bedrock/lib/openzeppelin-contracts/contracts/token/",
   "@solady-v0.0.245/=lib/optimism/packages/contracts-bedrock/lib/solady-v0.0.245/src/"
-]
+  ]

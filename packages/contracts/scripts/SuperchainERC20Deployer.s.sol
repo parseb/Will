@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 import {Script, console} from "forge-std/Script.sol";
 import {Vm} from "forge-std/Vm.sol";
-import {L2NativeSuperchainERC20} from "../src/L2NativeSuperchainERC20.sol";
+import {Will} from "../src/Will.sol";
 
 contract SuperchainERC20Deployer is Script {
     string deployConfig;
@@ -45,22 +45,23 @@ contract SuperchainERC20Deployer is Script {
 
     function deployL2NativeSuperchainERC20() public broadcast returns (address addr_, address ownerAddr_) {
         ownerAddr_ = vm.parseTomlAddress(deployConfig, ".token.owner_address");
-        string memory name = vm.parseTomlString(deployConfig, ".token.name");
-        string memory symbol = vm.parseTomlString(deployConfig, ".token.symbol");
+        // string memory name = vm.parseTomlString(deployConfig, ".token.name");
+        // string memory symbol = vm.parseTomlString(deployConfig, ".token.symbol");
         uint256 decimals = vm.parseTomlUint(deployConfig, ".token.decimals");
         require(decimals <= type(uint8).max, "decimals exceeds uint8 range");
-        bytes memory initCode = abi.encodePacked(
-            type(L2NativeSuperchainERC20).creationCode, abi.encode(ownerAddr_, name, symbol, uint8(decimals))
-        );
+
+        address[] memory initMintAddrs = new address[](1);
+        uint256[] memory initMintAmts_ = new uint256[](1);
+        
+
+        bytes memory initCode = abi.encodePacked(type(Will).creationCode, abi.encode(initMintAddrs, initMintAmts_));
         address preComputedAddress = vm.computeCreate2Address(_implSalt(), keccak256(initCode));
         if (preComputedAddress.code.length > 0) {
-            console.log(
-                "L2NativeSuperchainERC20 already deployed at %s", preComputedAddress, "on chain id: ", block.chainid
-            );
+            console.log("Will already deployed at %s", preComputedAddress, "on chain id: ", block.chainid);
             addr_ = preComputedAddress;
         } else {
-            addr_ = address(new L2NativeSuperchainERC20{salt: _implSalt()}(ownerAddr_, name, symbol, uint8(decimals)));
-            console.log("Deployed L2NativeSuperchainERC20 at address: ", addr_, "on chain id: ", block.chainid);
+            addr_ = address(new Will{salt: _implSalt()}(initMintAddrs, initMintAmts_));
+            console.log("Deployed Will at address: ", addr_, "on chain id: ", block.chainid);
         }
     }
 
