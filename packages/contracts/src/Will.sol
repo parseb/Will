@@ -6,7 +6,6 @@ import {SuperchainERC20} from "@contracts-bedrock/L2/SuperchainERC20.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
 import {IERC20} from "./interfaces/IERC20.sol";
-import {IFun} from "./interfaces/IFun.sol";
 
 contract Will is SuperchainERC20 {
     bool private entered;

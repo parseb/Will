@@ -6,7 +6,6 @@ import { L2NativeSuperchainERC20Abi } from '@/abi/L2NativeSuperchainERC20Abi'
 import {
   generatePrivateKey,
   privateKeyToAccount,
-  toAccount,
 } from 'viem/accounts'
 import {
   createInteropSentL2ToL2Messages,
@@ -14,19 +13,42 @@ import {
 } from '@eth-optimism/viem'
 
 const testPrivateKey = generatePrivateKey()
-const testAccount = privateKeyToAccount(testPrivateKey)
+const testAccount = privateKeyToAccount(`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);
 
-// Private key-less account - used with impersonation
-const minterAccount = toAccount(envVars.VITE_TOKEN_MINTER_ADDRESS)
+// Extend the base ABI with Will contract's functions
+const WillContractAbi = [
+  ...L2NativeSuperchainERC20Abi,
+  {
+    inputs: [],
+    name: 'currentPrice',
+    outputs: [{ type: 'uint256', name: '' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [{ type: 'uint256', name: 'amt_' }],
+    name: 'mintCost',
+    outputs: [{ type: 'uint256', name: '' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [{ type: 'uint256', name: 'howMany_' }],
+    name: 'mint',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function'
+  }
+] as const;
 
-const l2NativeSuperchainERC20Contract = {
+const willContract = {
   address: envVars.VITE_TOKEN_CONTRACT_ADDRESS,
-  abi: L2NativeSuperchainERC20Abi,
+  abi: WillContractAbi,
 } as const
 
 describe('bridge token from L2 to L2', async () => {
   const decimals = await testClientByChain.supersimL2A.readContract({
-    ...l2NativeSuperchainERC20Contract,
+    ...willContract,
     functionName: 'decimals',
   })
 
@@ -43,18 +65,24 @@ describe('bridge token from L2 to L2', async () => {
   })
 
   beforeAll(async () => {
-    // Impersonate the minter account and mint 1000 tokens to the test account
+    // Mint a smaller amount of tokens on each chain
     await Promise.all(
       testClients.map(async (client) => {
-        await client.impersonateAccount({
-          address: envVars.VITE_TOKEN_MINTER_ADDRESS,
+        // Start with a small amount - 1 token
+        const mintAmount = parseUnits('1', decimals)
+        const ethRequired = await client.readContract({
+          ...willContract,
+          functionName: 'mintCost',
+          args: [mintAmount],
         })
+
+        // Mint tokens by sending ETH
         const hash = await client.writeContract({
-          account: minterAccount,
-          address: envVars.VITE_TOKEN_CONTRACT_ADDRESS,
-          abi: L2NativeSuperchainERC20Abi,
-          functionName: 'mintTo',
-          args: [testAccount.address, parseUnits('1000', decimals)],
+          account: testAccount,
+          ...willContract,
+          functionName: 'mint',
+          args: [mintAmount],
+          value: ethRequired,
         })
         await client.waitForTransactionReceipt({ hash })
       }),
@@ -74,14 +102,15 @@ describe('bridge token from L2 to L2', async () => {
     'should bridge tokens from $source.chain.id to $destination.chain.id',
     async ({ source: sourceClient, destination: destinationClient }) => {
       const startingDestinationBalance = await destinationClient.readContract({
-        ...l2NativeSuperchainERC20Contract,
+        ...willContract,
         functionName: 'balanceOf',
         args: [testAccount.address],
       })
 
-      const amountToBridge = parseUnits('10', decimals)
+      // Bridge a smaller amount - 0.1 token
+      const amountToBridge = parseUnits('0.1', decimals)
 
-      // Initiate bridge transfer of 10 tokens from L2A to L2B
+      // Initiate bridge transfer
       const hash = await sourceClient.sendSupERC20({
         account: testAccount,
         tokenAddress: envVars.VITE_TOKEN_CONTRACT_ADDRESS,
@@ -102,7 +131,7 @@ describe('bridge token from L2 to L2', async () => {
       )
       expect(sentMessages).toHaveLength(1)
 
-      // Relay the message on the destination chain (L2B)
+      // Relay the message on the destination chain
       const relayMessageTxHash = await destinationClient.relayL2ToL2Message({
         account: testAccount,
         sentMessageId: sentMessages[0].id,
@@ -120,9 +149,9 @@ describe('bridge token from L2 to L2', async () => {
       })
       expect(successfulMessages).length(1)
 
-      // Verify the balance increased by 10 tokens on L2B
+      // Verify the balance increased by the bridged amount
       const endingBalance = await destinationClient.readContract({
-        ...l2NativeSuperchainERC20Contract,
+        ...willContract,
         functionName: 'balanceOf',
         args: [testAccount.address],
       })
@@ -140,7 +169,7 @@ describe('bridge token from L2 to L2', async () => {
     'should fail when trying to bridge more tokens than available balance',
     async ({ source: sourceClient }) => {
       const currentBalance = await sourceClient.readContract({
-        ...l2NativeSuperchainERC20Contract,
+        ...willContract,
         functionName: 'balanceOf',
         args: [testAccount.address],
       })

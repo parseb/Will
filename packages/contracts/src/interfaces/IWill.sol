@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.3;
 
-import {IERC20ASG} from "ERC20ASG/src/IERC20ASG.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IWill is IERC20ASG {
+interface IWill is IERC20 {
     /// @notice burns amount of token and retrieves underlying value as well as corresponding share of specified tokens
     ///
     function deconstructBurn(uint256 amountToBurn_, address[] memory tokensToRedeem)

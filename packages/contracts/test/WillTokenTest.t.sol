@@ -10,7 +10,7 @@ import {Will} from "src/Will.sol";
 import {WillTokenTestUtils, MockERC20} from "./WillTokenTestUtils.sol";
 
 /// @title WillTokenTest
-/// @notice Comprehensive tests for the Will token contract
+/// @notice Tests for the Will token contract
 contract WillTokenTest is WillTokenTestUtils {
     address internal constant ZERO_ADDRESS = address(0);
     address internal constant SUPERCHAIN_TOKEN_BRIDGE = Predeploys.SUPERCHAIN_TOKEN_BRIDGE;
