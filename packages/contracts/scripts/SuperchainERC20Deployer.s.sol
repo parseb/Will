@@ -53,8 +53,9 @@ contract SuperchainERC20Deployer is Script {
         address[] memory initMintAddrs = new address[](1);
         uint256[] memory initMintAmts_ = new uint256[](1);
 
-        initMintAddrs[0] = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
-        initMintAmts_[0] = 100 ether;
+
+        initMintAddrs[0] = address(this);
+        initMintAmts_[0] = 1 gwei;
         
 
         bytes memory initCode = abi.encodePacked(type(Will).creationCode, abi.encode(initMintAddrs, initMintAmts_));

@@ -23,6 +23,7 @@ contract Will is SuperchainERC20 {
                 initialSupply += initMintAmts_[i];
             }
         }
+        if (initialSupply == 0) _mint(address(3232), 1 ether);
         lastPrice = initialSupply / 1 gwei;
     }
 
