@@ -1,21 +1,41 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.3;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.25;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+interface IWill {
+    /// @notice Emitted when the price is updated
+    event PriceUpdated(uint256 previousPrice, uint256 newPrice);
 
-interface IWill is IERC20 {
-    /// @notice burns amount of token and retrieves underlying value as well as corresponding share of specified tokens
-    ///
+    /// @notice Custom error for failed transfers
+    error TransferFailedFor(address failingToken);
+
+    /// @notice Custom error for insufficient balance
+    error InsufficentBalance();
+
+    /// @notice Custom error for payment call failures
+    error PayCallF();
+
+    /// @notice Custom error for reentrancy protection
+    error Reentrant();
+
+    /// @notice Custom error for value mismatches
+    error ValueMismatch();
+
+    /// @notice Custom error for burn refund failures
+    error BurnRefundF();
+
+    /// @notice Burns amount of token and retrieves underlying value as well as corresponding share of specified tokens
+    /// @param amountToBurn_ Amount of tokens to burn
+    /// @param tokensToRedeem Array of token addresses to redeem
+    /// @return shareBurned Proportion of tokens burned
     function deconstructBurn(uint256 amountToBurn_, address[] memory tokensToRedeem)
         external
         returns (uint256 shareBurned);
 
-    function simpleBurn(uint256 amountToBurn_) external returns (uint256 amtValReturned);
-
+    /// @notice Mints tokens using ETH
+    /// @return howMuchMinted Amount of tokens minted
     function mintFromETH() external payable returns (uint256 howMuchMinted);
 
     /// @notice Mints new tokens
-    /// @notice Value calculation required
     /// @param howMany_ The amount of tokens to mint
     function mint(uint256 howMany_) external payable;
 
@@ -44,11 +64,11 @@ interface IWill is IERC20 {
     /// @return The current price per token
     function currentPrice() external view returns (uint256);
 
-    /// @notice Returns the timestamp when the contract was initialized
-    /// @return The initialization timestamp
-    function initTime() external view returns (uint256);
+    /// @notice Returns the last price update block
+    /// @return The block number of the last price update
+    function lastPriceBlock() external view returns (uint256);
 
-    /// @notice Returns the price increase per second
-    /// @return The price increase per second in wei
-    function pps() external view returns (uint256);
+    /// @notice Returns the last recorded price
+    /// @return The last recorded price
+    function lastPrice() external view returns (uint256);
 }
