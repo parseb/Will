@@ -5,7 +5,6 @@ import {IERC20} from "@openzeppelin/contracts-v5/token/ERC20/IERC20.sol";
 import {Test} from "forge-std/Test.sol";
 import {Will} from "src/Will.sol";
 
-
 /// @title WillTokenTestUtils
 /// @notice Utilities and mocks for testing Will token contract
 contract WillTokenTestUtils is Test {
@@ -15,11 +14,11 @@ contract WillTokenTestUtils is Test {
         vm.deal(user, balance);
         return user;
     }
-    
+
     /// @notice Helper to mock multiple token balances
     function mockTokenBalances(address[] memory tokens, address holder, uint256[] memory amounts) public {
         require(tokens.length == amounts.length, "Length mismatch");
-        for(uint256 i = 0; i < tokens.length; i++) {
+        for (uint256 i = 0; i < tokens.length; i++) {
             MockERC20(tokens[i]).mint(holder, amounts[i]);
         }
     }
@@ -32,7 +31,7 @@ contract MockERC20 is IERC20 {
     uint256 private _totalSupply;
     string private _name;
     string private _symbol;
-    
+
     bool public transferShouldRevert;
     bool public mintShouldRevert;
 
@@ -62,12 +61,29 @@ contract MockERC20 is IERC20 {
         emit Transfer(from, address(0), amount);
     }
 
-    function name() public view returns (string memory) { return _name; }
-    function symbol() public view returns (string memory) { return _symbol; }
-    function decimals() public pure returns (uint8) { return 18; }
-    function totalSupply() public view returns (uint256) { return _totalSupply; }
-    function balanceOf(address account) public view returns (uint256) { return _balances[account]; }
-    function allowance(address owner, address spender) public view returns (uint256) { return _allowances[owner][spender]; }
+    function name() public view returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view returns (string memory) {
+        return _symbol;
+    }
+
+    function decimals() public pure returns (uint8) {
+        return 18;
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return _totalSupply;
+    }
+
+    function balanceOf(address account) public view returns (uint256) {
+        return _balances[account];
+    }
+
+    function allowance(address owner, address spender) public view returns (uint256) {
+        return _allowances[owner][spender];
+    }
 
     function transfer(address to, uint256 amount) public returns (bool) {
         require(!transferShouldRevert, "Transfer reverted");

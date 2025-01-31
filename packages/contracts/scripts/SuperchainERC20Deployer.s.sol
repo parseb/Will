@@ -53,10 +53,8 @@ contract SuperchainERC20Deployer is Script {
         address[] memory initMintAddrs = new address[](1);
         uint256[] memory initMintAmts_ = new uint256[](1);
 
-
         initMintAddrs[0] = address(this);
         initMintAmts_[0] = 1 gwei;
-        
 
         bytes memory initCode = abi.encodePacked(type(Will).creationCode, abi.encode(initMintAddrs, initMintAmts_));
         address preComputedAddress = vm.computeCreate2Address(_implSalt(), keccak256(initCode));
@@ -71,7 +69,6 @@ contract SuperchainERC20Deployer is Script {
 
     // function postDeploy(address WillAddress) public {
     //     Will = Will(WillAddress);
-
 
     // }
 
