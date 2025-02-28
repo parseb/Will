@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import {Predeploys} from "@contracts-bedrock/libraries/Predeploys.sol";
 import {SuperchainERC20} from "@contracts-bedrock/L2/SuperchainERC20.sol";
-import {Ownable} from "@solady/auth/Ownable.sol";
 import {IERC20} from "./interfaces/IERC20.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
@@ -15,7 +13,6 @@ contract Will is SuperchainERC20 {
     uint256 public lastPriceBlock;
     uint256 public lastBlockSupply;
 
-    // Events
     event WillMinted(address indexed to, uint256 amount, uint256 ethValue);
     event WillBurned(address indexed from, uint256 amount, uint256 ethReturned);
     event WillDeconstructBurned(
