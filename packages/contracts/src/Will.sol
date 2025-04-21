@@ -15,11 +15,7 @@ contract Will is SuperchainERC20 {
 
     event WillMinted(address indexed to, uint256 amount, uint256 ethValue);
     event WillBurned(address indexed from, uint256 amount, uint256 ethReturned);
-    event WillDeconstructBurned(
-        address indexed from, 
-        uint256 willAmount, 
-        uint256 ethAmount
-    );
+    event WillDeconstructBurned(address indexed from, uint256 willAmount, uint256 ethAmount);
     event PriceUpdated(uint256 newPrice);
 
     constructor(address[] memory initMintAddrs_, uint256[] memory initMintAmts_) {
@@ -32,8 +28,8 @@ contract Will is SuperchainERC20 {
             }
         }
         if (totalSupply() == 0) _mint(address(0), 1 ether);
-        
-        lastPrice = 1 gwei; 
+
+        lastPrice = 1 gwei;
         lastBlockSupply = totalSupply();
     }
 
@@ -77,20 +73,20 @@ contract Will is SuperchainERC20 {
         _updatePriceIfNewBlock();
         if (msg.value < lastPrice) revert ValueMismatch();
 
-        howMuchMinted = (msg.value * 1 ether) / lastPrice;
+        howMuchMinted = msg.value / currentPrice() * 1e18;
         _mint(msg.sender, howMuchMinted);
-        
+
         emit WillMinted(msg.sender, howMuchMinted, msg.value);
     }
 
     function mint(uint256 howMany_) public payable {
         _updatePriceIfNewBlock();
 
-        uint256 required = mintCost(howMany_);
+        uint256 required = howMany_ * currentPrice();
         if (msg.value < required) revert InsufficientValue({required: required, provided: msg.value});
-        
-        _mint(msg.sender, howMany_);
-        
+
+        _mint(msg.sender, howMany_ * 1e18);
+
         emit WillMinted(msg.sender, howMany_, msg.value);
     }
 
@@ -167,9 +163,12 @@ contract Will is SuperchainERC20 {
         entered = false;
     }
 
+    //// @note Returns the cost of minting a given amount of tokens
+    /// @param amt_ The amount of tokens to mint in full 1e18 units
+    /// @return The cost in wei to mint the specified amount of tokens
     function mintCost(uint256 amt_) public view virtual returns (uint256) {
         uint256 price = currentPrice();
-        return (amt_ * price * 1 gwei) / 1 ether;
+        return (amt_ * price);
     }
 
     function burnReturns(uint256 amt_) public view virtual returns (uint256 rv) {

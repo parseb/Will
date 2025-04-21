@@ -238,4 +238,15 @@ contract WillTokenTest is WillTokenTestUtils {
         vm.expectRevert(abi.encodeWithSelector(Will.TransferFailedFor.selector, address(token1)));
         willToken.deconstructBurn(TEST_AMOUNT, tokens);
     }
+
+    function testFirstMint() public {
+        assertTrue(willToken.balanceOf(alice) == INITIAL_MINT, "Alice should have initial tokens");
+
+        vm.prank(alice);
+        uint256 minted = willToken.mintFromETH{value: 1 ether}();
+
+        assertEq(willToken.balanceOf(alice), minted + INITIAL_MINT, "Alice should have minted tokens");
+        assertGt(minted, 100 ether, "Minted amount should be greater than 1 ether");
+        assertEq(address(willToken).balance, 1 ether, "Contract should hold ETH");
+    }
 }
