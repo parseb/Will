@@ -248,6 +248,5 @@ contract WillTokenTest is WillTokenTestUtils {
         assertEq(willToken.balanceOf(alice), minted + INITIAL_MINT, "Alice should have minted tokens");
         assertGt(minted, 100 ether, "Minted amount should be greater than 1 ether");
         assertEq(address(willToken).balance, 1 ether, "Contract should hold ETH");
-        
     }
 }

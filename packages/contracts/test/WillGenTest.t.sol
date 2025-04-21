@@ -66,7 +66,6 @@ contract WillTest is Test {
         vm.stopPrank();
     }
 
-
     function testLargeMints() public {
         vm.startPrank(users[0]);
 

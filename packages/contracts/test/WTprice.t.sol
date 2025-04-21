@@ -60,7 +60,7 @@ contract WillTokenPriceTest is WillTokenTestUtils {
         vm.prank(charlie);
         charlieMinted = willToken.mintFromETH{value: 5 ether}();
         vm.roll(block.number + 1);
-        
+
         console.log("priceOne", priceOne);
         console.log("priceTwo", priceTwo);
         console.log("priceThree", willToken.currentPrice());
@@ -74,7 +74,6 @@ contract WillTokenPriceTest is WillTokenTestUtils {
         assertTrue(bobMinted > charlieMinted, "Bob should have more than Charlie");
         assertTrue(bobMinted > charlieMinted * 2, "Bob should have more than 2x Charlie");
 
-
         // Alice burns her initial tokens
         vm.prank(alice);
         uint256 burnReturn = willToken.burn(INITIAL_MINT);
@@ -87,8 +86,6 @@ contract WillTokenPriceTest is WillTokenTestUtils {
     /// @notice Test price proportionality with total supply, burn return value, and minting mechanics
     function testPriceAndBurnMechanics() public {
         uint256 initialPrice = willToken.currentPrice();
-
-
 
         vm.roll(block.number + 1); // Roll to the next block
         uint256 charliePrice = willToken.currentPrice();
@@ -115,12 +112,12 @@ contract WillTokenPriceTest is WillTokenTestUtils {
         assertTrue(davidMinted < charlieMinted, "Minted tokens should decrease as total supply increases");
 
         // Calculate expected burn return based on proportion of total supply
-        uint256 expectedBurnReturn = address(willToken).balance* INITIAL_MINT / willToken.totalSupply();
+        uint256 expectedBurnReturn = address(willToken).balance * INITIAL_MINT / willToken.totalSupply();
 
         // Alice burns her initial tokens
         vm.roll(block.number + 1); // Roll to the next block
         vm.prank(alice);
-        uint256 burnReturn = willToken.burn(INITIAL_MINT/2);
+        uint256 burnReturn = willToken.burn(INITIAL_MINT / 2);
 
         assertGt(burnReturn, 0, "Burn should return some value");
         assertEq(burnReturn, expectedBurnReturn / 2, "Burn return should match expected value");
@@ -132,7 +129,7 @@ contract WillTokenPriceTest is WillTokenTestUtils {
 
         vm.roll(block.number + 1); // Roll to the next block
         vm.prank(alice);
-        uint256 burnReturnAfterMint = willToken.burn(INITIAL_MINT/2);
+        uint256 burnReturnAfterMint = willToken.burn(INITIAL_MINT / 2);
         assertGt(burnReturnAfterMint, burnReturn, "Burn return should increase with additional mints");
     }
 
@@ -179,7 +176,6 @@ contract WillTokenPriceTest is WillTokenTestUtils {
         testAmounts[1] = 1 ether;
         testAmounts[2] = 10 ether;
         testAmounts[3] = 50 ether;
-
 
         for (uint256 i = 0; i < testAmounts.length; i++) {
             uint256 currentPrice = willToken.currentPrice();
@@ -230,9 +226,5 @@ contract WillTokenPriceTest is WillTokenTestUtils {
         assertTrue(charlieBurnReturn > 1 gwei, "Charlie should receive some ETH on burn");
 
         assertTrue(bobBurnReturn == charlieBurnReturn, "Bob should receive more ETH than Charlie");
-
-
-
     }
-
 }

@@ -18,11 +18,7 @@ contract Will is SuperchainERC20 {
     // Events
     event WillMinted(address indexed to, uint256 amount, uint256 ethValue);
     event WillBurned(address indexed from, uint256 amount, uint256 ethReturned);
-    event WillDeconstructBurned(
-        address indexed from, 
-        uint256 willAmount, 
-        uint256 ethAmount
-    );
+    event WillDeconstructBurned(address indexed from, uint256 willAmount, uint256 ethAmount);
     event PriceUpdated(uint256 newPrice);
 
     constructor(address[] memory initMintAddrs_, uint256[] memory initMintAmts_) {
@@ -35,8 +31,8 @@ contract Will is SuperchainERC20 {
             }
         }
         if (totalSupply() == 0) _mint(address(0), 1 ether);
-        
-        lastPrice = 1 gwei; 
+
+        lastPrice = 1 gwei;
         lastBlockSupply = totalSupply();
     }
 
@@ -82,7 +78,7 @@ contract Will is SuperchainERC20 {
 
         howMuchMinted = msg.value / currentPrice() * 1e18;
         _mint(msg.sender, howMuchMinted);
-        
+
         emit WillMinted(msg.sender, howMuchMinted, msg.value);
     }
 
@@ -91,9 +87,9 @@ contract Will is SuperchainERC20 {
 
         uint256 required = howMany_ * currentPrice();
         if (msg.value < required) revert InsufficientValue({required: required, provided: msg.value});
-        
+
         _mint(msg.sender, howMany_ * 1e18);
-        
+
         emit WillMinted(msg.sender, howMany_, msg.value);
     }
 
@@ -169,7 +165,6 @@ contract Will is SuperchainERC20 {
 
         entered = false;
     }
-
 
     //// @note Returns the cost of minting a given amount of tokens
     /// @param amt_ The amount of tokens to mint in full 1e18 units
