@@ -172,7 +172,7 @@ contract Will is SuperchainERC20 {
 
     function mintCost(uint256 amt_) public view virtual returns (uint256) {
         uint256 price = currentPrice();
-        return (amt_ * price * 1 gwei) / 1 ether;
+        return (amt_ * price) / 1 ether;
     }
 
     function burnReturns(uint256 amt_) public view virtual returns (uint256 rv) {
