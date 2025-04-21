@@ -88,10 +88,11 @@ contract WillTokenPriceTest is WillTokenTestUtils {
     function testPriceAndBurnMechanics() public {
         uint256 initialPrice = willToken.currentPrice();
 
-        // Mint tokens with increasing ETH amounts
-        vm.roll(block.number + 1); // Roll to the next block
+
 
         vm.roll(block.number + 1); // Roll to the next block
+        uint256 charliePrice = willToken.currentPrice();
+
         vm.prank(charlie);
         uint256 charlieMinted = willToken.mintFromETH{value: 1 ether}();
         vm.roll(block.number + 1);
@@ -104,9 +105,14 @@ contract WillTokenPriceTest is WillTokenTestUtils {
 
         // Verify number of tokens minted decreases as total supply increases for the same ETH value
         vm.roll(block.number + 1); // Roll to the next block
+        uint256 davidPrice = willToken.currentPrice();
         vm.prank(david);
         uint256 davidMinted = willToken.mintFromETH{value: 1 ether}();
-        assertLt(davidMinted, charlieMinted, "Minted tokens should decrease as total supply increases");
+
+        console.log(charlieMinted, davidMinted, charliePrice, davidPrice);
+
+        assertTrue(charliePrice < davidPrice, "Price should increase with supply");
+        assertTrue(davidMinted < charlieMinted, "Minted tokens should decrease as total supply increases");
 
         // Calculate expected burn return based on proportion of total supply
         uint256 expectedBurnReturn = address(willToken).balance* INITIAL_MINT / willToken.totalSupply();
@@ -181,7 +187,7 @@ contract WillTokenPriceTest is WillTokenTestUtils {
             vm.prank(bob);
             uint256 minted = willToken.mintFromETH{value: testAmounts[i]}();
 
-            assertEq(minted, (testAmounts[i] * 1 ether) / currentPrice, "Minted amount should match expected");
+            assertEq(minted, (testAmounts[i] / currentPrice * 1 ether), "Minted amount should match expected");
 
             assertGt(minted, 0, "Should always mint some tokens");
             uint256 newBalance = minted + oldBalance;

@@ -80,7 +80,7 @@ contract Will is SuperchainERC20 {
         _updatePriceIfNewBlock();
         if (msg.value < lastPrice) revert ValueMismatch();
 
-        howMuchMinted = msg.value / currentPrice();
+        howMuchMinted = msg.value / currentPrice() * 1e18;
         _mint(msg.sender, howMuchMinted);
         
         emit WillMinted(msg.sender, howMuchMinted, msg.value);
